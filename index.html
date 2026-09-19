@@ -92,16 +92,22 @@
     <div class="mt-6 rounded-xl border-l-4 border-or bg-velours-clair p-5">
       <p class="m-0 font-corps text-[.72rem] font-bold uppercase tracking-[.18em] text-or">La règle du jeu</p>
       <p class="mb-0 mt-3 text-[.95rem] leading-[1.6] text-creme/80">
-        Quatorze questions. Chacun répond à son tour sans voir les autres, puis tout est révélé d'un coup.
+        Cinq questions pour goûter, quatorze pour la vraie partie. Chacun répond à son tour sans voir les autres, puis tout est révélé d'un coup.
         À la fin, le groupe vote pour désigner celui qui a le plus menti — et le démasqué a une conséquence.
         Les résultats ne sont pas des étiquettes au hasard : ils sont calculés sur vos réponses réelles.
       </p>
     </div>
 
-    <button id="commencer" type="button" disabled
-      class="bouton mt-6 w-full rounded-full bg-or px-8 py-4 font-titre text-lg uppercase tracking-[.08em] text-velours transition hover:bg-creme disabled:cursor-not-allowed disabled:opacity-30">
-      Commencer la partie
-    </button>
+    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+      <button id="commencerRapide" type="button" disabled
+        class="bouton rounded-full border-2 border-or px-6 py-4 font-titre text-base uppercase tracking-[.06em] text-or transition hover:bg-or hover:text-velours disabled:cursor-not-allowed disabled:opacity-30">
+        Partie rapide &mdash; 5 questions
+      </button>
+      <button id="commencer" type="button" disabled
+        class="bouton rounded-full bg-or px-6 py-4 font-titre text-base uppercase tracking-[.06em] text-velours transition hover:bg-creme disabled:cursor-not-allowed disabled:opacity-30">
+        Partie complète &mdash; 14 questions
+      </button>
+    </div>
 
     <p class="mt-4 text-center text-[.85rem] italic text-creme/45">
       Rien n'est envoyé nulle part : la partie vit dans ce téléphone et meurt avec lui.
@@ -274,10 +280,11 @@
   var iQuestion = 0, iJoueur = 0, iVotant = 0;
   var phase = "joueurs";
   var analyse = null;
+  var derniereLongueur = QUESTIONS.length;
 
   var el = {};
   ["ecranJoueurs","ecranQuestion","ecranRevelation","ecranVote","ecranFin","formJoueur","champJoueur",
-   "listeJoueurs","commencer","numQuestion","progression","texteQuestion","pastilleJoueur","nomJoueur",
+   "listeJoueurs","commencer","commencerRapide","numQuestion","progression","texteQuestion","pastilleJoueur","nomJoueur",
    "options","rappelQuestion","listeRevelation","suiteRevelation","pastilleVotant","nomVotant","optionsVote",
    "nomDemasque","voixDemasque","gage","blocGroupe","classement","rejouerMemes","rejouerAutres","copierScores"
   ].forEach(function (id) { el[id] = document.getElementById(id); });
@@ -369,6 +376,7 @@
     });
 
     el.commencer.disabled = joueurs.length < 2;
+    el.commencerRapide.disabled = joueurs.length < 2;
     el.champJoueur.disabled = joueurs.length >= 8;
     el.champJoueur.placeholder = joueurs.length >= 8 ? "Huit, c'est déjà beaucoup" : "Un prénom";
   }
@@ -385,8 +393,10 @@
 
   /* ---------- partie ---------- */
 
-  function demarrer() {
-    ordre = melanger(QUESTIONS.length);
+  function demarrer(combien) {
+    var n = (combien && combien > 0 && combien <= QUESTIONS.length) ? combien : QUESTIONS.length;
+    derniereLongueur = n;
+    ordre = melanger(QUESTIONS.length).slice(0, n);
     iQuestion = 0; iJoueur = 0; iVotant = 0;
     phase = "question";
     analyse = null;
@@ -754,8 +764,9 @@
 
   /* ---------- commandes ---------- */
 
-  el.commencer.addEventListener("click", demarrer);
-  el.rejouerMemes.addEventListener("click", demarrer);
+  el.commencer.addEventListener("click", function () { demarrer(QUESTIONS.length); });
+  el.commencerRapide.addEventListener("click", function () { demarrer(5); });
+  el.rejouerMemes.addEventListener("click", function () { demarrer(derniereLongueur); });
 
   el.rejouerAutres.addEventListener("click", function () {
     joueurs = [];
@@ -798,9 +809,11 @@
   /* ---------- reprise ---------- */
 
   var reprise = lire();
-  if (reprise && reprise.joueurs && reprise.joueurs.length >= 2 && reprise.ordre && reprise.ordre.length === QUESTIONS.length) {
+  if (reprise && reprise.joueurs && reprise.joueurs.length >= 2 &&
+      reprise.ordre && reprise.ordre.length > 0 && reprise.ordre.length <= QUESTIONS.length) {
     joueurs = reprise.joueurs;
     ordre = reprise.ordre;
+    derniereLongueur = ordre.length;
     iQuestion = reprise.iQuestion || 0;
     iJoueur = reprise.iJoueur || 0;
     iVotant = reprise.iVotant || 0;
