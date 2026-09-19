@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Le Test du Boudoir</title>
-<meta name="description" content="Quatorze questions, jusqu'à huit joueurs, une révélation collective après chaque tour et un classement dont personne ne sort indemne.">
+<meta name="description" content="Quatorze questions, jusqu'à huit joueurs, une révélation après chaque tour, un démasquage à la fin et des résultats calculés sur vos vraies réponses.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Le Test du Boudoir">
-<meta property="og:description" content="Quel ou quelle coquine es-tu, vraiment ? À huit, sur le même téléphone, avec révélation après chaque question.">
+<meta property="og:description" content="Qui ment, qui se ressemble, qui ne se comprendra jamais. Et une conséquence pour le démasqué.">
 <meta property="og:locale" content="fr_FR">
 <meta name="theme-color" content="#2a0a18">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%232a0a18'/%3E%3Cpath d='M32 50C18 40 10 32 10 24a11 11 0 0 1 22-4 11 11 0 0 1 22 4c0 8-8 16-22 26z' fill='%23ff5c8a'/%3E%3C/svg%3E">
@@ -70,9 +70,6 @@
   <header class="text-center">
     <p class="m-0 font-script text-[clamp(2rem,8vw,2.8rem)] leading-none text-or">Le Test</p>
     <h1 class="m-0 font-titre text-[clamp(2rem,9vw,3.4rem)] uppercase leading-[.95] tracking-[.02em]">du Boudoir</h1>
-    <p class="mx-auto mb-0 mt-3 max-w-[30rem] text-[.98rem] text-creme/60">
-      Quatorze questions, jusqu'à huit joueurs, un seul téléphone. Personne ne voit les réponses des autres avant la révélation.
-    </p>
   </header>
 
   <!-- ============ 1. les joueurs ============ -->
@@ -92,8 +89,17 @@
 
     <ul id="listeJoueurs" class="mt-5 flex list-none flex-wrap gap-2 p-0"></ul>
 
+    <div class="mt-6 rounded-xl border-l-4 border-or bg-velours-clair p-5">
+      <p class="m-0 font-corps text-[.72rem] font-bold uppercase tracking-[.18em] text-or">La règle du jeu</p>
+      <p class="mb-0 mt-3 text-[.95rem] leading-[1.6] text-creme/80">
+        Quatorze questions. Chacun répond à son tour sans voir les autres, puis tout est révélé d'un coup.
+        À la fin, le groupe vote pour désigner celui qui a le plus menti — et le démasqué a une conséquence.
+        Les résultats ne sont pas des étiquettes au hasard : ils sont calculés sur vos réponses réelles.
+      </p>
+    </div>
+
     <button id="commencer" type="button" disabled
-      class="bouton mt-8 w-full rounded-full bg-or px-8 py-4 font-titre text-lg uppercase tracking-[.08em] text-velours transition hover:bg-creme disabled:cursor-not-allowed disabled:opacity-30">
+      class="bouton mt-6 w-full rounded-full bg-or px-8 py-4 font-titre text-lg uppercase tracking-[.08em] text-velours transition hover:bg-creme disabled:cursor-not-allowed disabled:opacity-30">
       Commencer la partie
     </button>
 
@@ -118,10 +124,6 @@
     </div>
 
     <div id="options" class="grid gap-3"></div>
-
-    <p class="mt-5 text-center text-[.82rem] italic text-creme/40">
-      Les autres regardent ailleurs. Ou pas, c'est votre affaire.
-    </p>
   </section>
 
   <!-- ============ 3. la révélation ============ -->
@@ -137,11 +139,48 @@
     </button>
   </section>
 
-  <!-- ============ 4. le classement ============ -->
-  <section id="ecranFin" class="hidden flex-1 flex-col py-8">
-    <p class="m-0 text-center font-script text-[clamp(2rem,8vw,2.6rem)] leading-none text-or">Le verdict</p>
-    <h2 class="mb-6 mt-1 text-center font-titre text-[clamp(1.8rem,7vw,2.6rem)] uppercase leading-none">Classement</h2>
+  <!-- ============ 4. le vote ============ -->
+  <section id="ecranVote" class="hidden flex-1 flex-col justify-center py-8">
+    <p class="m-0 text-center font-corps text-[.72rem] font-bold uppercase tracking-[.22em] text-or">Dernier tour</p>
+    <p class="mb-6 mt-3 text-center font-titre text-[clamp(1.4rem,5.5vw,2rem)] leading-[1.2]">
+      Qui a le plus menti ce soir&nbsp;?
+    </p>
 
+    <div id="bandeauVotant" class="mb-4 flex items-center gap-3 rounded-full border-2 border-velours-bord bg-velours-clair px-5 py-3">
+      <span id="pastilleVotant" class="h-4 w-4 shrink-0 rounded-full"></span>
+      <p id="nomVotant" class="m-0 text-[1.05rem] font-extrabold"></p>
+      <p class="m-0 ml-auto text-[.78rem] uppercase tracking-[.12em] text-creme/40">ton vote</p>
+    </div>
+
+    <div id="optionsVote" class="grid gap-3 sm:grid-cols-2"></div>
+
+    <p class="mt-5 text-center text-[.82rem] italic text-creme/40">
+      On ne peut pas voter pour soi-même. Ce serait trop facile.
+    </p>
+  </section>
+
+  <!-- ============ 5. les résultats ============ -->
+  <section id="ecranFin" class="hidden flex-1 flex-col py-8">
+
+    <!-- le démasqué -->
+    <div id="blocDemasque" class="rounded-2xl border-2 border-rose bg-velours-clair p-6 text-center">
+      <p class="m-0 font-corps text-[.72rem] font-bold uppercase tracking-[.22em] text-rose">Démasqué par le groupe</p>
+      <p id="nomDemasque" class="m-0 mt-2 font-titre text-[clamp(1.8rem,8vw,2.8rem)] uppercase leading-none"></p>
+      <p id="voixDemasque" class="m-0 mt-2 text-[.9rem] uppercase tracking-[.12em] text-creme/50"></p>
+      <div class="mt-5 rounded-xl border-l-4 border-or bg-velours p-4 text-left">
+        <p class="m-0 font-corps text-[.7rem] font-bold uppercase tracking-[.18em] text-or">La conséquence</p>
+        <p id="gage" class="mb-0 mt-2 text-[1.05rem] leading-[1.5]"></p>
+      </div>
+    </div>
+
+    <!-- ce que disent vos réponses -->
+    <h2 class="mb-1 mt-10 font-titre text-[1.6rem] uppercase">Ce que disent vos réponses</h2>
+    <p class="mb-5 text-[.92rem] text-creme/55">Tout ce qui suit est calculé sur les quatorze réponses de chacun. Rien n'est tiré au sort.</p>
+
+    <div id="blocGroupe" class="grid gap-4 sm:grid-cols-2"></div>
+
+    <!-- fiches joueurs -->
+    <h2 class="mb-5 mt-10 font-titre text-[1.6rem] uppercase">Chacun son cas</h2>
     <ol id="classement" class="m-0 list-none space-y-4 p-0"></ol>
 
     <div class="mt-8 flex flex-wrap justify-center gap-3">
@@ -155,7 +194,7 @@
       </button>
       <button id="copierScores" type="button"
         class="bouton rounded-full border-2 border-velours-bord px-6 py-3 font-corps text-[.8rem] font-bold uppercase tracking-[.12em] text-creme/60 transition hover:border-or hover:text-or">
-        Copier le classement
+        Copier le bilan
       </button>
     </div>
   </section>
@@ -170,7 +209,7 @@
 (function () {
   "use strict";
 
-  /* Chaque option vaut de 0 a 3 points. Plus c'est haut, plus c'est assume. */
+  /* Chaque option vaut de 0 a 3 points, dans l'ordre. */
   var QUESTIONS = [
     { q: "Le lieu le plus discutable où tu as embrassé quelqu'un ?",
       o: ["Un banc, en plein jour, comme les gens bien", "La cuisine, pendant que la soirée continuait à côté", "Les toilettes d'un bar dont tu tairas le nom", "Un endroit que tu refuses de nommer devant témoins"] },
@@ -217,49 +256,38 @@
 
   var COULEURS = ["#ff5c8a", "#e8c06a", "#4ecdc4", "#b39ddb", "#ff8a5c", "#7ac74f", "#6ec6ff", "#f2a0c0"];
 
-  var TITRES = [
-    { max: 10, t: "L'ange du groupe", p: "Une pureté qui force le respect, ou un mensonge d'une qualité remarquable. Le doute subsiste." },
-    { max: 20, t: "Le vernis discret", p: "Tu as des choses à raconter. Tu ne les raconteras pas ce soir, et c'est bien dommage." },
-    { max: 30, t: "La rumeur fondée", p: "Tout ce qu'on dit sur toi est vrai. Tu as arrêté de démentir depuis longtemps." },
-    { max: 42, t: "Danger public", p: "Tu n'as pas de limites, tu as des anecdotes. Le groupe te surveille par principe." }
+  var GAGES = [
+    "Tu racontes pour de vrai l'histoire derrière une de tes réponses. C'est le groupe qui choisit laquelle.",
+    "Tu réponds honnêtement à une question que la personne à ta droite a le droit de poser. Une seule, mais sans filtre.",
+    "Tu ouvres ta galerie photo à la date que le groupe désigne, et tu commentes.",
+    "Tu appelles quelqu'un qui n'est pas là et tu lui racontes ta soirée. Haut-parleur obligatoire.",
+    "Tu paies la prochaine tournée, et tu remercies le groupe de t'avoir démasqué.",
+    "Tu laisses la personne à ta gauche écrire un message depuis ton téléphone. À toi de choisir le destinataire, pas le texte.",
+    "Tu dis à chaque joueur une chose vraie que tu n'as jamais osé lui dire. Une phrase chacun, ça suffit.",
+    "Tu rejoues la question qui a le plus divisé le groupe, mais cette fois tu justifies ta réponse à voix haute."
   ];
 
-  var CLE = "boudoir-v1";
+  var CLE = "boudoir-v2";
 
-  var joueurs = [];      /* { nom, couleur, score, reponses: [] } */
-  var ordre = [];        /* indices des questions, melanges */
-  var iQuestion = 0, iJoueur = 0;
+  var joueurs = [];      /* { nom, couleur, score, reponses:[{t,p}], votePour, voix } */
+  var ordre = [];
+  var iQuestion = 0, iJoueur = 0, iVotant = 0;
+  var phase = "joueurs";
+  var analyse = null;
 
-  var el = {
-    ecranJoueurs: document.getElementById("ecranJoueurs"),
-    ecranQuestion: document.getElementById("ecranQuestion"),
-    ecranRevelation: document.getElementById("ecranRevelation"),
-    ecranFin: document.getElementById("ecranFin"),
-    formJoueur: document.getElementById("formJoueur"),
-    champJoueur: document.getElementById("champJoueur"),
-    listeJoueurs: document.getElementById("listeJoueurs"),
-    commencer: document.getElementById("commencer"),
-    numQuestion: document.getElementById("numQuestion"),
-    progression: document.getElementById("progression"),
-    texteQuestion: document.getElementById("texteQuestion"),
-    pastilleJoueur: document.getElementById("pastilleJoueur"),
-    nomJoueur: document.getElementById("nomJoueur"),
-    options: document.getElementById("options"),
-    rappelQuestion: document.getElementById("rappelQuestion"),
-    listeRevelation: document.getElementById("listeRevelation"),
-    suiteRevelation: document.getElementById("suiteRevelation"),
-    classement: document.getElementById("classement"),
-    rejouerMemes: document.getElementById("rejouerMemes"),
-    rejouerAutres: document.getElementById("rejouerAutres"),
-    copierScores: document.getElementById("copierScores")
-  };
+  var el = {};
+  ["ecranJoueurs","ecranQuestion","ecranRevelation","ecranVote","ecranFin","formJoueur","champJoueur",
+   "listeJoueurs","commencer","numQuestion","progression","texteQuestion","pastilleJoueur","nomJoueur",
+   "options","rappelQuestion","listeRevelation","suiteRevelation","pastilleVotant","nomVotant","optionsVote",
+   "nomDemasque","voixDemasque","gage","blocGroupe","classement","rejouerMemes","rejouerAutres","copierScores"
+  ].forEach(function (id) { el[id] = document.getElementById(id); });
 
   function lire()    { try { return JSON.parse(localStorage.getItem(CLE)) || null; } catch (e) { return null; } }
   function ecrire(o) { try { localStorage.setItem(CLE, JSON.stringify(o)); } catch (e) { /* prive */ } }
   function oublier() { try { localStorage.removeItem(CLE); } catch (e) { /* rien */ } }
 
   function sauver() {
-    ecrire({ joueurs: joueurs, ordre: ordre, iQuestion: iQuestion, iJoueur: iJoueur });
+    ecrire({ joueurs: joueurs, ordre: ordre, iQuestion: iQuestion, iJoueur: iJoueur, iVotant: iVotant, phase: phase });
   }
 
   function melanger(n) {
@@ -273,13 +301,38 @@
   }
 
   function montrer(section) {
-    [el.ecranJoueurs, el.ecranQuestion, el.ecranRevelation, el.ecranFin].forEach(function (s) {
+    [el.ecranJoueurs, el.ecranQuestion, el.ecranRevelation, el.ecranVote, el.ecranFin].forEach(function (s) {
       s.classList.add("hidden");
       s.classList.remove("flex", "animate-entree");
     });
     section.classList.remove("hidden");
     section.classList.add("flex", "animate-entree");
     window.scrollTo(0, 0);
+  }
+
+  function carte(titre, couleurTitre, principal, detail) {
+    var d = document.createElement("div");
+    d.className = "rounded-xl border border-velours-bord bg-velours-clair p-5";
+
+    var t = document.createElement("p");
+    t.className = "m-0 font-corps text-[.68rem] font-bold uppercase tracking-[.16em]";
+    t.style.color = couleurTitre;
+    t.textContent = titre;
+
+    var p = document.createElement("p");
+    p.className = "mb-0 mt-2 text-[1.08rem] font-extrabold leading-[1.35]";
+    p.textContent = principal;
+
+    d.appendChild(t);
+    d.appendChild(p);
+
+    if (detail) {
+      var s = document.createElement("p");
+      s.className = "mb-0 mt-2 border-t border-velours-bord pt-3 text-[.88rem] leading-[1.55] text-creme/60";
+      s.textContent = detail;
+      d.appendChild(s);
+    }
+    return d;
   }
 
   /* ---------- joueurs ---------- */
@@ -324,7 +377,7 @@
     e.preventDefault();
     var nom = el.champJoueur.value.trim();
     if (!nom || joueurs.length >= 8) { return; }
-    joueurs.push({ nom: nom, couleur: COULEURS[joueurs.length % COULEURS.length], score: 0, reponses: [] });
+    joueurs.push({ nom: nom, couleur: COULEURS[joueurs.length % COULEURS.length], score: 0, reponses: [], votePour: -1, voix: 0 });
     el.champJoueur.value = "";
     el.champJoueur.focus();
     dessinerJoueurs();
@@ -334,14 +387,15 @@
 
   function demarrer() {
     ordre = melanger(QUESTIONS.length);
-    iQuestion = 0;
-    iJoueur = 0;
-    joueurs.forEach(function (j) { j.score = 0; j.reponses = []; });
+    iQuestion = 0; iJoueur = 0; iVotant = 0;
+    phase = "question";
+    analyse = null;
+    joueurs.forEach(function (j) { j.score = 0; j.reponses = []; j.votePour = -1; j.voix = 0; });
     poserQuestion();
   }
 
   function poserQuestion() {
-    if (iQuestion >= ordre.length) { terminer(); return; }
+    if (iQuestion >= ordre.length) { phase = "vote"; iVotant = 0; poserVote(); return; }
 
     var q = QUESTIONS[ordre[iQuestion]];
     var j = joueurs[iJoueur];
@@ -369,11 +423,11 @@
   function repondre(points, texte) {
     var j = joueurs[iJoueur];
     j.score += points;
-    j.reponses[iQuestion] = texte;
+    j.reponses[iQuestion] = { t: texte, p: points };
 
     iJoueur++;
     if (iJoueur < joueurs.length) { poserQuestion(); }
-    else { reveler(); }
+    else { phase = "revelation"; reveler(); }
   }
 
   function reveler() {
@@ -395,7 +449,7 @@
 
       var rep = document.createElement("p");
       rep.className = "m-0 mt-1 text-[1rem] leading-[1.4]";
-      rep.textContent = j.reponses[iQuestion] || "—";
+      rep.textContent = (j.reponses[iQuestion] && j.reponses[iQuestion].t) || "—";
 
       bloc.appendChild(nom);
       bloc.appendChild(rep);
@@ -403,7 +457,7 @@
       el.listeRevelation.appendChild(li);
     });
 
-    el.suiteRevelation.textContent = (iQuestion + 1 >= ordre.length) ? "Voir le classement" : "Question suivante";
+    el.suiteRevelation.textContent = (iQuestion + 1 >= ordre.length) ? "Passer au vote" : "Question suivante";
     montrer(el.ecranRevelation);
     sauver();
   }
@@ -411,22 +465,226 @@
   el.suiteRevelation.addEventListener("click", function () {
     iQuestion++;
     iJoueur = 0;
+    phase = "question";
     poserQuestion();
   });
 
-  function titrePour(score) {
-    for (var i = 0; i < TITRES.length; i++) {
-      if (score <= TITRES[i].max) { return TITRES[i]; }
-    }
-    return TITRES[TITRES.length - 1];
+  /* ---------- vote ---------- */
+
+  function poserVote() {
+    if (iVotant >= joueurs.length) { depouiller(); return; }
+
+    var v = joueurs[iVotant];
+    el.nomVotant.textContent = v.nom;
+    el.pastilleVotant.style.backgroundColor = v.couleur;
+
+    el.optionsVote.textContent = "";
+    joueurs.forEach(function (cible, i) {
+      if (i === iVotant) { return; }
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "option flex items-center gap-3 rounded-xl border-2 border-velours-bord bg-velours-clair px-5 py-4 text-left text-[1.05rem] font-bold transition hover:border-rose hover:bg-rose/15";
+
+      var pastille = document.createElement("span");
+      pastille.className = "h-3 w-3 shrink-0 rounded-full";
+      pastille.style.backgroundColor = cible.couleur;
+
+      var nom = document.createElement("span");
+      nom.textContent = cible.nom;
+
+      b.appendChild(pastille);
+      b.appendChild(nom);
+      b.addEventListener("click", function () {
+        v.votePour = i;
+        iVotant++;
+        poserVote();
+      });
+      el.optionsVote.appendChild(b);
+    });
+
+    montrer(el.ecranVote);
+    sauver();
   }
 
-  function terminer() {
-    var classes = joueurs.slice().sort(function (a, b) { return b.score - a.score; });
+  /* ---------- analyse ---------- */
+
+  function distance(a, b) {
+    var d = 0;
+    for (var i = 0; i < ordre.length; i++) {
+      var pa = a.reponses[i] ? a.reponses[i].p : 0;
+      var pb = b.reponses[i] ? b.reponses[i].p : 0;
+      d += Math.abs(pa - pb);
+    }
+    return d;
+  }
+
+  function identiques(a, b) {
+    var n = 0;
+    for (var i = 0; i < ordre.length; i++) {
+      if (a.reponses[i] && b.reponses[i] && a.reponses[i].p === b.reponses[i].p) { n++; }
+    }
+    return n;
+  }
+
+  function calculer() {
+    var n = joueurs.length, maxDist = 3 * ordre.length;
+    var res = { paires: [], parJoueur: [], plusDivisee: null, unanimes: [] };
+
+    var i, j;
+    for (i = 0; i < n; i++) {
+      for (j = i + 1; j < n; j++) {
+        var d = distance(joueurs[i], joueurs[j]);
+        res.paires.push({
+          a: i, b: j, dist: d,
+          compat: Math.round((1 - d / maxDist) * 100),
+          memes: identiques(joueurs[i], joueurs[j])
+        });
+      }
+    }
+    res.paires.sort(function (x, y) { return x.dist - y.dist; });
+
+    for (i = 0; i < n; i++) {
+      var somme = 0, proche = null, loin = null;
+      for (j = 0; j < n; j++) {
+        if (i === j) { continue; }
+        var dd = distance(joueurs[i], joueurs[j]);
+        somme += dd;
+        if (!proche || dd < proche.d) { proche = { i: j, d: dd }; }
+        if (!loin || dd > loin.d) { loin = { i: j, d: dd }; }
+      }
+      var extremes = 0, medianes = 0;
+      joueurs[i].reponses.forEach(function (r) {
+        if (!r) { return; }
+        if (r.p === 0 || r.p === 3) { extremes++; } else { medianes++; }
+      });
+      res.parJoueur.push({
+        i: i,
+        distMoy: n > 1 ? somme / (n - 1) : 0,
+        proche: proche, loin: loin,
+        extremes: extremes, medianes: medianes,
+        titre: null
+      });
+    }
+
+    /* question la plus divisee et unanimites */
+    var meilleure = -1;
+    for (var k = 0; k < ordre.length; k++) {
+      var pts = joueurs.map(function (jj) { return jj.reponses[k] ? jj.reponses[k].p : 0; });
+      var mini = Math.min.apply(null, pts), maxi = Math.max.apply(null, pts);
+      var moy = pts.reduce(function (s, p) { return s + p; }, 0) / pts.length;
+      var varia = pts.reduce(function (s, p) { return s + (p - moy) * (p - moy); }, 0) / pts.length;
+      if (varia > meilleure) { meilleure = varia; res.plusDivisee = { k: k, ecart: maxi - mini, varia: varia }; }
+      if (maxi === mini) { res.unanimes.push({ k: k, p: maxi }); }
+    }
+
+    /* titres uniques, attribues par ordre de priorite */
+    var criteres = [
+      { t: "Danger public",       d: "Score le plus haut du groupe. Personne n'a assumé autant.",                 v: function (f) { return joueurs[f.i].score; },          max: true },
+      { t: "L'ange déclaré",      d: "Score le plus bas. Soit c'est vrai, soit c'est du grand art.",              v: function (f) { return joueurs[f.i].score; },          max: false },
+      { t: "L'électron libre",    d: "Celui dont les réponses ressemblent le moins à celles des autres.",          v: function (f) { return f.distMoy; },                   max: true },
+      { t: "Le miroir du groupe", d: "Celui qui colle le plus à la moyenne de la table.",                          v: function (f) { return f.distMoy; },                   max: false },
+      { t: "Le sans-nuance",      d: "Que des réponses extrêmes : tout ou rien, jamais entre les deux.",           v: function (f) { return f.extremes; },                  max: true },
+      { t: "Le diplomate",        d: "Presque que des réponses du milieu. Prudent, ou très entraîné.",             v: function (f) { return f.medianes; },                  max: true },
+      { t: "Le témoin discret",   d: "Rien ne dépasse, et c'est peut-être ça le plus suspect.",                    v: function (f) { return -f.distMoy; },                  max: true }
+    ];
+
+    var restants = res.parJoueur.slice();
+    criteres.forEach(function (c) {
+      if (!restants.length) { return; }
+      var meilleur = restants[0];
+      restants.forEach(function (f) {
+        var vf = c.v(f), vm = c.v(meilleur);
+        if (c.max ? vf > vm : vf < vm) { meilleur = f; }
+      });
+      meilleur.titre = { t: c.t, d: c.d };
+      restants = restants.filter(function (f) { return f !== meilleur; });
+    });
+    restants.forEach(function (f) { f.titre = { t: "Le cas à part", d: "Impossible à ranger dans une case, et ce n'est pas faute d'avoir essayé." }; });
+
+    return res;
+  }
+
+  function depouiller() {
+    joueurs.forEach(function (j) { j.voix = 0; });
+    joueurs.forEach(function (j) {
+      if (j.votePour >= 0 && joueurs[j.votePour]) { joueurs[j.votePour].voix++; }
+    });
+
+    analyse = calculer();
+    phase = "fin";
+    afficherFin();
+  }
+
+  function afficherFin() {
+    var maxVoix = Math.max.apply(null, joueurs.map(function (j) { return j.voix; }));
+    var exaequo = joueurs.filter(function (j) { return j.voix === maxVoix; });
+    var demasque = exaequo[Math.floor(Math.random() * exaequo.length)];
+
+    el.nomDemasque.textContent = demasque.nom;
+    el.nomDemasque.style.color = demasque.couleur;
+    el.voixDemasque.textContent = exaequo.length > 1
+      ? maxVoix + " voix, à égalité — le sort a tranché"
+      : maxVoix + " voix sur " + joueurs.length;
+    el.gage.textContent = GAGES[Math.floor(Math.random() * GAGES.length)];
+
+    /* ---- bilan de groupe ---- */
+    el.blocGroupe.textContent = "";
+
+    var meilleure = analyse.paires[0];
+    if (meilleure) {
+      var a = joueurs[meilleure.a], b = joueurs[meilleure.b];
+      el.blocGroupe.appendChild(carte(
+        "Le duo de la soirée", "#ff5c8a",
+        a.nom + " et " + b.nom + " — " + meilleure.compat + " % d'accord",
+        "Réponses identiques sur " + meilleure.memes + " questions sur " + ordre.length + ". Vous avez la même idée de la limite, ce qui explique beaucoup de choses."
+      ));
+    }
+
+    if (analyse.paires.length > 1) {
+      var pire = analyse.paires[analyse.paires.length - 1];
+      var c = joueurs[pire.a], d = joueurs[pire.b];
+      el.blocGroupe.appendChild(carte(
+        "Les deux qui ne se comprendront jamais", "#6ec6ff",
+        c.nom + " et " + d.nom + " — " + pire.compat + " % d'accord",
+        "Seulement " + pire.memes + " réponses en commun sur " + ordre.length + ". Ne partez pas en vacances ensemble, ou faites-le et racontez-nous."
+      ));
+    }
+
+    if (analyse.plusDivisee) {
+      var qd = QUESTIONS[ordre[analyse.plusDivisee.k]];
+      el.blocGroupe.appendChild(carte(
+        "La question qui a fracturé la table", "#e8c06a",
+        qd.q,
+        "C'est là que vos réponses se sont le plus éloignées, avec " + analyse.plusDivisee.ecart + " crans d'écart entre le plus sage et le moins sage. Si vous devez reparler d'une seule question ce soir, c'est celle-là."
+      ));
+    }
+
+    if (analyse.unanimes.length) {
+      var qu = QUESTIONS[ordre[analyse.unanimes[0].k]];
+      el.blocGroupe.appendChild(carte(
+        "L'unanimité", "#7ac74f",
+        qu.q,
+        "Tout le monde a répondu exactement pareil. Soit vous vous connaissez très bien, soit vous vous êtes concertés, soit vous mentez de la même façon."
+      ));
+    }
+
+    var moyenne = joueurs.reduce(function (s, j) { return s + j.score; }, 0) / joueurs.length;
+    el.blocGroupe.appendChild(carte(
+      "Température du groupe", "#b39ddb",
+      Math.round(moyenne) + " sur " + (ordre.length * 3) + " en moyenne",
+      moyenne < ordre.length ? "Une table sage. Sur le papier." :
+      moyenne < ordre.length * 1.7 ? "Une table équilibrée : assez d'aveux pour la soirée, pas assez pour un procès." :
+      "Une table qui n'a plus rien à perdre. Les voisins non plus."
+    ));
+
+    /* ---- fiches joueurs ---- */
+    var classes = joueurs.map(function (j, i) { return { j: j, f: analyse.parJoueur[i] }; })
+      .sort(function (x, y) { return y.j.score - x.j.score; });
+
     el.classement.textContent = "";
 
-    classes.forEach(function (j, rang) {
-      var t = titrePour(j.score);
+    classes.forEach(function (item, rang) {
+      var j = item.j, f = item.f;
 
       var li = document.createElement("li");
       li.className = "rounded-xl border-2 bg-velours-clair p-5";
@@ -436,8 +694,8 @@
       ligne.className = "flex items-baseline gap-3";
 
       var pos = document.createElement("span");
-      pos.className = "font-titre text-[1.6rem] leading-none";
-      pos.style.color = rang === 0 ? "#e8c06a" : j.couleur;
+      pos.className = "font-titre text-[1.5rem] leading-none";
+      pos.style.color = j.couleur;
       pos.textContent = (rang + 1) + ".";
 
       var nom = document.createElement("span");
@@ -446,24 +704,47 @@
 
       var score = document.createElement("span");
       score.className = "ml-auto font-corps text-[.85rem] font-bold uppercase tracking-[.12em] text-creme/50";
-      score.textContent = j.score + " / 42";
+      score.textContent = j.score + " / " + (ordre.length * 3);
 
-      ligne.appendChild(pos);
-      ligne.appendChild(nom);
-      ligne.appendChild(score);
+      ligne.appendChild(pos); ligne.appendChild(nom); ligne.appendChild(score);
+      li.appendChild(ligne);
 
       var titre = document.createElement("p");
       titre.className = "mb-0 mt-3 text-[1.05rem] font-extrabold";
       titre.style.color = j.couleur;
-      titre.textContent = t.t;
-
-      var phrase = document.createElement("p");
-      phrase.className = "mb-0 mt-1 text-[.95rem] leading-[1.5] text-creme/70";
-      phrase.textContent = t.p;
-
-      li.appendChild(ligne);
+      titre.textContent = f.titre.t;
       li.appendChild(titre);
-      li.appendChild(phrase);
+
+      var desc = document.createElement("p");
+      desc.className = "mb-0 mt-1 text-[.92rem] leading-[1.5] text-creme/65";
+      desc.textContent = f.titre.d;
+      li.appendChild(desc);
+
+      var faits = document.createElement("ul");
+      faits.className = "m-0 mt-3 list-none space-y-1 border-t border-velours-bord p-0 pt-3 text-[.88rem] text-creme/70";
+
+      function fait(texte) {
+        var e = document.createElement("li");
+        e.textContent = texte;
+        faits.appendChild(e);
+      }
+
+      if (f.proche) {
+        fait("Le plus proche de lui ce soir : " + joueurs[f.proche.i].nom + ".");
+      }
+      if (f.loin && joueurs.length > 2) {
+        fait("À l'opposé : " + joueurs[f.loin.i].nom + ".");
+      }
+      fait(f.extremes > f.medianes
+        ? "Répond par les extrêmes (" + f.extremes + " fois sur " + ordre.length + ") : pas du genre à nuancer."
+        : "Reste dans la nuance (" + f.medianes + " réponses du milieu sur " + ordre.length + ").");
+      if (j.voix > 0) {
+        fait(j.voix + (j.voix > 1 ? " personnes l'ont soupçonné de mentir." : " personne l'a soupçonné de mentir."));
+      } else {
+        fait("Personne ne l'a soupçonné de mentir. Crédible, donc.");
+      }
+
+      li.appendChild(faits);
       el.classement.appendChild(li);
     });
 
@@ -471,10 +752,9 @@
     oublier();
   }
 
-  /* ---------- commandes de fin ---------- */
+  /* ---------- commandes ---------- */
 
   el.commencer.addEventListener("click", demarrer);
-
   el.rejouerMemes.addEventListener("click", demarrer);
 
   el.rejouerAutres.addEventListener("click", function () {
@@ -485,11 +765,19 @@
   });
 
   el.copierScores.addEventListener("click", function () {
-    var classes = joueurs.slice().sort(function (a, b) { return b.score - a.score; });
-    var texte = "Le Test du Boudoir\n" + classes.map(function (j, i) {
-      return (i + 1) + ". " + j.nom + " — " + j.score + "/42 — " + titrePour(j.score).t;
-    }).join("\n");
+    if (!analyse) { return; }
+    var classes = joueurs.map(function (j, i) { return { j: j, f: analyse.parJoueur[i] }; })
+      .sort(function (x, y) { return y.j.score - x.j.score; });
 
+    var lignes = ["Le Test du Boudoir"];
+    var duo = analyse.paires[0];
+    if (duo) { lignes.push("Duo de la soirée : " + joueurs[duo.a].nom + " et " + joueurs[duo.b].nom + " (" + duo.compat + " %)"); }
+    lignes.push("");
+    classes.forEach(function (item, i) {
+      lignes.push((i + 1) + ". " + item.j.nom + " — " + item.j.score + "/" + (ordre.length * 3) + " — " + item.f.titre.t);
+    });
+
+    var texte = lignes.join("\n");
     var bouton = el.copierScores, avant = bouton.textContent;
     function fini(msg) {
       bouton.textContent = msg;
@@ -501,7 +789,7 @@
       return;
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(texte).then(function () { fini("Classement copié"); }, function () { fini("Copie refusée"); });
+      navigator.clipboard.writeText(texte).then(function () { fini("Bilan copié"); }, function () { fini("Copie refusée"); });
       return;
     }
     fini("Copie indisponible");
@@ -515,8 +803,12 @@
     ordre = reprise.ordre;
     iQuestion = reprise.iQuestion || 0;
     iJoueur = reprise.iJoueur || 0;
+    iVotant = reprise.iVotant || 0;
+    phase = reprise.phase || "question";
     dessinerJoueurs();
-    poserQuestion();
+    if (phase === "vote") { poserVote(); }
+    else if (phase === "revelation") { reveler(); }
+    else { poserQuestion(); }
   } else {
     dessinerJoueurs();
   }
